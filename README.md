@@ -14,7 +14,7 @@ An open-source **multi-agent AI research system** that autonomously researches a
 - Easy-to-use web interface
 
 ## 🚀 Live Demo
-*(Coming soon - will be deployed on Hugging Face Spaces)*
+https://huggingface.co/spaces/ditux/DeepDive-AI
 
 ## Tech Stack
 - **LangGraph** + LangChain (for agent orchestration)
