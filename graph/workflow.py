@@ -1,12 +1,28 @@
 from langgraph.graph import StateGraph, END
 from langchain_groq import ChatGroq
-from typing import TypedDict, Annotated, List
+from typing import TypedDict, Annotated
+import os
 import operator
 from utils.prompts import PLANNER_PROMPT, RESEARCHER_PROMPT, WRITER_PROMPT, CRITIC_PROMPT
 from graph.tools import web_search, scrape_page
 
-# Initialize LLM (change model if you want)
-llm = ChatGroq(model="llama-3.3-70b-versatile", temperature=0.3)
+llm: ChatGroq | None = None
+
+
+def get_llm() -> ChatGroq:
+    global llm
+    if llm is not None:
+        return llm
+
+    api_key = os.getenv("GROQ_API_KEY")
+    if not api_key or api_key.startswith("your_"):
+        raise RuntimeError(
+            "GROQ_API_KEY is missing. Set it in environment variables or Streamlit secrets."
+        )
+
+    model_name = os.getenv("GROQ_MODEL", "llama-3.3-70b-versatile")
+    llm = ChatGroq(model=model_name, temperature=0.3, api_key=api_key)
+    return llm
 
 class ResearchState(TypedDict):
     query: str
@@ -19,7 +35,7 @@ class ResearchState(TypedDict):
 def planner_node(state: ResearchState):
     """Break down the query into a research plan."""
     prompt = PLANNER_PROMPT + f"\n\nUser Query: {state['query']}"
-    response = llm.invoke(prompt)
+    response = get_llm().invoke(prompt)
     return {"plan": response.content}
 
 def researcher_node(state: ResearchState):
@@ -38,13 +54,13 @@ def writer_node(state: ResearchState):
     research_text = "\n\n".join(state.get("research_data", []))
     prompt = WRITER_PROMPT + f"\n\nResearch Findings:\n{research_text}\n\nOriginal Query: {state['query']}"
     
-    response = llm.invoke(prompt)
+    response = get_llm().invoke(prompt)
     return {"draft": response.content}
 
 def critic_node(state: ResearchState):
     """Review and finalize the report."""
     prompt = CRITIC_PROMPT + f"\n\nDraft Report:\n{state['draft']}"
-    response = llm.invoke(prompt)
+    response = get_llm().invoke(prompt)
     
     # For now, use draft as final (you can improve this later)
     return {

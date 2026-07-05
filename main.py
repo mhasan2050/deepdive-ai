@@ -4,6 +4,17 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+# In hosted environments (e.g., Streamlit Cloud), secrets are often provided
+# via st.secrets rather than a local .env file.
+for key_name in ("GROQ_API_KEY", "TAVILY_API_KEY"):
+    if not os.getenv(key_name):
+        try:
+            secret_val = st.secrets.get(key_name)
+        except Exception:
+            secret_val = None
+        if secret_val:
+            os.environ[key_name] = secret_val
+
 from graph.workflow import build_research_graph
 
 
@@ -39,6 +50,12 @@ def run_research(query):
                 )
             except ImportError:
                 st.info("Install weasyprint for PDF export: pip install weasyprint")
+            except OSError as e:
+                st.info(
+                    "PDF export is unavailable in this environment (missing system libraries for WeasyPrint). "
+                    "You can still download Markdown."
+                )
+                st.caption(f"PDF export detail: {e}")
         except Exception as e:
             st.error(f"Error: {str(e)}")
 
