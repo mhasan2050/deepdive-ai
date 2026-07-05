@@ -1,33 +1,33 @@
-# DeepDive AI - Open Source Multi-Agent Research Assistant
+# DeepDive AI - Agentic Research Assistant
 
-[![GitHub Stars](https://img.shields.io/github/stars/yourusername/deepdive-ai)](https://github.com/yourusername/deepdive-ai)
-[![Hugging Face Spaces](https://img.shields.io/badge/🚀-Live_Demo-blue)](https://huggingface.co/spaces/yourusername/deepdive-ai)
+[![GitHub Stars](https://img.shields.io/github/stars/mhasan2050/deepdive-ai?style=social)](https://github.com/mhasan2050/deepdive-ai)
+![Python](https://img.shields.io/badge/Python-3776AB?logo=python&logoColor=white)
+![LangGraph](https://img.shields.io/badge/LangGraph-4B8BBE)
 
-An autonomous AI research system that turns any question into a high-quality, cited research report.
+An open-source **multi-agent AI research system** that autonomously researches any topic and delivers high-quality, well-cited reports.
 
 ## ✨ Features
-- Multi-agent architecture (Planner → Researcher → Writer → Critic)
-- Real-time web search + page scraping
-- Self-critique and quality improvement loop
-- Structured Markdown + PDF export
-- Fully open source & locally runnable
+- Multi-agent workflow (Planner → Researcher → Writer → Critic)
+- Real-time web search & content scraping
+- Self-critique and quality improvement
+- Structured Markdown reports with citations
+- Easy-to-use web interface
 
-## Live Demo
-→ Try it here: [Hugging Face Space](link)
-
-## Architecture
-![Architecture](assets/architecture.png)
+## 🚀 Live Demo
+*(Coming soon - will be deployed on Hugging Face Spaces)*
 
 ## Tech Stack
-- LangGraph + LangChain
-- Tavily Search
-- Llama 3.1 / Grok / Claude
-- Streamlit UI
+- **LangGraph** + LangChain (for agent orchestration)
+- Tavily (web search)
+- Streamlit (UI)
+- Support for Grok, Llama 3.1, Claude, OpenAI, etc.
 
-## How to Run Locally
+## Quick Start
+
 ```bash
-git clone https://github.com/yourusername/deepdive-ai
+git clone https://github.com/mhasan2050/deepdive-ai.git
 cd deepdive-ai
 pip install -r requirements.txt
+
+# Create .env file with your API keys
 cp .env.example .env
-streamlit run main.py
