@@ -1,9 +1,14 @@
-langgraph
-langchain
+langgraph>=0.2.0
+langchain>=0.3.0
 langchain-community
-langchain-openai  # or langchain-groq, etc.
+langchain-openai
+langchain-groq
 tavily-python
 beautifulsoup4
+requests
 pydantic
 streamlit
 python-dotenv
+markdown
+weasyprint
+markdown

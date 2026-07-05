@@ -1,13 +1,70 @@
 import streamlit as st
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
 from graph.workflow import build_research_graph
 
-st.title("DeepDive AI - Multi-Agent Research Assistant")
 
-query = st.text_input("What would you like to research?")
+def run_research(query):
+    with st.spinner("Planning -> Researching -> Writing -> Critiquing..."):
+        try:
+            graph = build_research_graph()
+            result = graph.invoke({"query": query})
 
-if st.button("Start Research"):
-    with st.spinner("Researching..."):
-        graph = build_research_graph()
-        result = graph.invoke({"query": query})
-        st.markdown(result["final_report"])
-        st.download_button("Download Report", result["final_report"])
+            st.success("✅ Research completed successfully!")
+
+            st.subheader("📋 Final Research Report")
+            st.markdown(result.get("final_report", "No report generated."))
+
+            st.download_button(
+                "📥 Download as Markdown",
+                data=result.get("final_report", ""),
+                file_name=f"deepdive_report.md",
+                mime="text/markdown"
+            )
+            # PDF download (new)
+            try:
+                import markdown
+                from weasyprint import HTML
+                html_content = markdown.markdown(result.get("final_report", ""))
+                pdf_bytes = HTML(string=html_content).write_pdf()
+                
+                st.download_button(
+                    "📕 Download as PDF",
+                    data=pdf_bytes,
+                    file_name=f"deepdive_report.pdf",
+                    mime="application/pdf"
+                )
+            except ImportError:
+                st.info("Install weasyprint for PDF export: pip install weasyprint")
+        except Exception as e:
+            st.error(f"Error: {str(e)}")
+
+st.set_page_config(page_title="DeepDive AI", page_icon="🔍", layout="centered")
+st.title("🔍 DeepDive AI")
+st.caption("Multi-Agent Autonomous Research Assistant")
+
+# Example queries
+examples = [
+    "Latest breakthroughs in agentic AI systems in 2026",
+    "Impact of AI on software engineering jobs",
+    "Compare Grok 4 vs Claude 4 vs GPT-5 capabilities"
+]
+
+query = st.text_area("Enter your research topic or question:", height=120, placeholder="What would you like to research?")
+
+col1, col2 = st.columns(2)
+with col1:
+    if st.button("🚀 Start Research", type="primary", use_container_width=True):
+        if query:
+            run_research(query)
+        else:
+            st.warning("Please enter a query.")
+
+with col2:
+    if st.button("Try Example", use_container_width=True):
+        query = st.selectbox("Choose example:", examples)
+        if query:
+            run_research(query)
